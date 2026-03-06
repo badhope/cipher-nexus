@@ -3,9 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="CIPHER NEXUS - 专业的密码学工具平台，提供加密、解密、密码生成、密码分析等功能">
+    <meta name="keywords" content="密码学，加密，解密，密码生成，网络安全，加密工具">
+    <meta name="theme-color" content="#05080f">
     <title>CIPHER NEXUS | 密码枢纽</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    
+    <!-- 性能优化：资源预加载 -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- 字体预加载 -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Orbitron:wght@400;500;600;700;800;900&display=swap" as="style">
+    
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="src/css/styles.css">
+    
+    <!-- Tailwind 配置 -->
     <script>
         tailwind.config = {
             theme: {
@@ -29,302 +50,13 @@
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 性能优化：关键 CSS 内联 -->
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'JetBrains Mono', monospace;
-            background: #05080f;
-            color: #e0e0e0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        /* 自定义滚动条 */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(0, 240, 255, 0.05); }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #00f0ff, #bf00ff); border-radius: 2px; }
-        
-        /* 动态背景 */
-        .bg-grid {
-            position: fixed;
-            inset: 0;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(0, 240, 255, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 80% 50%, rgba(191, 0, 255, 0.03) 0%, transparent 50%),
-                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        /* 浮动几何体 */
-        .floating-shape {
-            position: fixed;
-            opacity: 0.1;
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        /* 玻璃态面板 */
-        .glass-panel {
-            background: linear-gradient(135deg, rgba(10, 16, 32, 0.9) 0%, rgba(5, 8, 15, 0.95) 100%);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 240, 255, 0.1);
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        }
-        
-        /* 导航按钮 */
-        .nav-btn {
-            position: relative;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .nav-btn::before {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            background: linear-gradient(135deg, #00f0ff, #bf00ff);
-            border-radius: inherit;
-            opacity: 0;
-            transition: opacity 0.4s;
-            z-index: -1;
-        }
-        
-        .nav-btn:hover, .nav-btn.active {
-            border-color: transparent;
-            color: #fff;
-        }
-        
-        .nav-btn:hover::before, .nav-btn.active::before {
-            opacity: 1;
-        }
-        
-        /* 模块卡片 */
-        .module-card {
-            position: relative;
-            background: linear-gradient(145deg, rgba(10, 16, 32, 0.6), rgba(5, 8, 15, 0.8));
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .module-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, transparent 40%, rgba(0, 240, 255, 0.1) 100%);
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-        
-        .module-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            border-color: rgba(0, 240, 255, 0.3);
-            box-shadow: 0 20px 60px rgba(0, 240, 255, 0.15);
-        }
-        
-        .module-card:hover::before {
-            opacity: 1;
-        }
-        
-        /* 密码选项 */
-        .cipher-tile {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .cipher-tile:hover {
-            background: rgba(0, 240, 255, 0.05);
-            border-color: rgba(0, 240, 255, 0.2);
-        }
-        
-        .cipher-tile.selected {
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(191, 0, 255, 0.1));
-            border-color: #00f0ff;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
-        }
-        
-        /* 输入输出框 */
-        .text-area {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #e0e0e0;
-            font-family: 'JetBrains Mono', monospace;
-            resize: none;
-            transition: all 0.3s;
-        }
-        
-        .text-area:focus {
-            outline: none;
-            border-color: #00f0ff;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
-        }
-        
-        /* 操作按钮 */
-        .action-btn {
-            position: relative;
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(191, 0, 255, 0.15));
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        
-        .action-btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, #00f0ff, #bf00ff);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.3);
-        }
-        
-        .action-btn:hover::after {
-            opacity: 1;
-        }
-        
-        .action-btn span {
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* 视图切换动画 */
-        .view {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .view.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* 加载动画 */
-        .loading-ring {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(0, 240, 255, 0.1);
-            border-top-color: #00f0ff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* 脉冲动画 */
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(0, 240, 255, 0.6); }
-        }
-        
-        .pulse-glow {
-            animation: pulse-glow 2s ease-in-out infinite;
-        }
-        
-        /* 浮动动画 */
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-        
-        /* 扫描线 */
-        .scan-line {
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #00f0ff, transparent);
-            animation: scan 3s linear infinite;
-        }
-        
-        @keyframes scan {
-            0% { top: 0; opacity: 0; }
-            50% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-        
-        /* 移动端底部导航 */
-        @media (max-width: 768px) {
-            .mobile-nav {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: 50;
-            }
-        }
-        
-        /* 标签样式 */
-        .tag {
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 20px;
-            font-size: 0.65rem;
-            padding: 2px 8px;
-        }
-        
-        /* 进度条 */
-        .progress-bar {
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 1px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00f0ff, #bf00ff);
-            transition: width 0.3s;
-        }
-        
-        /* 历史卡片 */
-        .history-card {
-            background: rgba(0, 0, 0, 0.3);
-            border-left: 3px solid #00f0ff;
-            border-radius: 0 12px 12px 0;
-            transition: all 0.3s;
-        }
-        
-        .history-card:hover {
-            background: rgba(0, 240, 255, 0.05);
-            transform: translateX(5px);
-        }
-        
-        /* 图鉴卡片 */
-        .codex-card {
-            background: linear-gradient(145deg, rgba(10, 16, 32, 0.8), rgba(5, 8, 15, 0.9));
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            transition: all 0.3s;
-        }
-        
-        .codex-card:hover {
-            border-color: rgba(191, 0, 255, 0.3);
-            box-shadow: 0 10px 30px rgba(191, 0, 255, 0.1);
-        }
+        /* 首屏关键样式 */
+        body{margin:0;font-family:'JetBrains Mono',monospace;background:#05080f;color:#e0e0e0;min-height:100vh}
+        .view{display:none}.view.active{display:block}
+        .glass-panel{background:linear-gradient(135deg,rgba(10,16,32,0.9),rgba(5,8,15,0.95));backdrop-filter:blur(20px)}
     </style>
 </head>
 <body>
@@ -375,11 +107,23 @@
                     <button onclick="showView('workspace')" class="nav-btn px-5 py-2 rounded-lg text-sm font-display" data-view="workspace">
                         <i class="fas fa-terminal mr-2"></i>工作台
                     </button>
+                    <button onclick="showView('password-lab')" class="nav-btn px-5 py-2 rounded-lg text-sm font-display" data-view="password-lab">
+                        <i class="fas fa-key mr-2"></i>密码本
+                    </button>
+                    <button onclick="showView('combo')" class="nav-btn px-5 py-2 rounded-lg text-sm font-display" data-view="combo">
+                        <i class="fas fa-layer-group mr-2"></i>组合密码
+                    </button>
+                    <button onclick="showView('multi')" class="nav-btn px-5 py-2 rounded-lg text-sm font-display" data-view="multi">
+                        <i class="fas fa-random mr-2"></i>多重翻译
+                    </button>
                     <button onclick="showView('history')" class="nav-btn px-5 py-2 rounded-lg text-sm font-display" data-view="history">
                         <i class="fas fa-database mr-2"></i>档案库
                     </button>
                     <button onclick="showView('codex')" class="nav-btn px-5 py-2 rounded-lg text-sm font-display" data-view="codex">
                         <i class="fas fa-book mr-2"></i>密码图鉴
+                    </button>
+                    <button onclick="showView('settings')" class="nav-btn px-5 py-2 rounded-lg text-sm font-display" data-view="settings">
+                        <i class="fas fa-cog mr-2"></i>设置
                     </button>
                 </nav>
                 
@@ -476,6 +220,24 @@
                                 <span class="tag text-neon-blue">算法详解</span>
                             </div>
                         </div>
+                        
+                        <!-- 密码本 -->
+                        <div class="module-card p-6 md:p-8" onclick="showView('password-lab')">
+                            <div class="mb-4">
+                                <svg class="w-12 h-12 text-neon-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                                    <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                                    <path d="M16 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                                </svg>
+                            </div>
+                            <h3 class="font-display text-xl font-bold mb-2 text-white">密码本 <span class="badge badge-new">NEW</span></h3>
+                            <p class="text-gray-400 text-sm mb-4">生成强密码、学习密码历史、配置加密方法</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tag text-neon-gold">密码生成</span>
+                                <span class="tag text-neon-green">使用指南</span>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- 快速统计 -->
@@ -541,10 +303,10 @@
                             </div>
                             <textarea id="inputText" class="text-area w-full h-48 md:h-64 p-4 text-sm" placeholder="在此输入文本，支持超长文本...&#10;&#10;提示：可直接粘贴或拖拽文件到此处"></textarea>
                             <div class="flex justify-between items-center mt-2 text-xs text-gray-500">
-                                <span id="charCount">字符: 0</span>
+                                <span id="charCount">字符：0</span>
                                 <label class="cursor-pointer hover:text-neon-blue transition-colors">
                                     <i class="fas fa-file-upload mr-1"></i>上传文件
-                                    <input type="file" class="hidden" accept=".txt" onchange="handleFileUpload(this)">
+                                    <input type="file" class="hidden" accept=".txt">
                                 </label>
                             </div>
                         </div>
@@ -570,7 +332,7 @@
                                 <pre id="outputText" class="text-neon-green text-sm whitespace-pre-wrap break-all">等待操作...</pre>
                             </div>
                             <div class="flex justify-between items-center mt-2 text-xs text-gray-500">
-                                <span id="outputCount">输出: 0 字符</span>
+                                <span id="outputCount">输出：0 字符</span>
                                 <span id="processTime"></span>
                             </div>
                         </div>
@@ -583,11 +345,11 @@
                                 <i class="fas fa-fingerprint text-neon-purple"></i>
                                 选择密码算法
                             </h3>
-                            <span class="text-xs text-gray-500">已选: <span id="selectedCipherName" class="text-neon-blue">摩斯密码</span></span>
+                            <span class="text-xs text-gray-500">已选：<span id="selectedCipherName" class="text-neon-blue">摩斯密码</span></span>
                         </div>
                         
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3" id="cipherGrid">
-                            <!-- 密码选项将由JS生成 -->
+                            <!-- 密码选项将由 JS 生成 -->
                         </div>
                         
                         <!-- 参数配置区 -->
@@ -604,7 +366,61 @@
                                 <span id="actionBtnText">执行加密</span>
                             </span>
                         </button>
+                        <button onclick="analyzeOutput()" class="action-btn py-4 px-6 rounded-xl font-display font-semibold tracking-wide tooltip" data-tooltip="分析输出结果强度">
+                            <span class="flex items-center gap-2">
+                                <i class="fas fa-chart-bar"></i>
+                                <span class="hidden sm:inline">分析</span>
+                            </span>
+                        </button>
+                        <button onclick="toggleBatchMode()" class="action-btn py-4 px-6 rounded-xl font-display font-semibold tracking-wide tooltip" data-tooltip="批量处理模式">
+                            <span class="flex items-center gap-2">
+                                <i class="fas fa-layer-group"></i>
+                                <span class="hidden sm:inline">批量</span>
+                            </span>
+                        </button>
                     </div>
+                    
+                    <!-- 批量处理区域 -->
+                    <div id="batchPanel" class="glass-panel rounded-2xl p-5 mt-6 hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-display text-sm font-semibold flex items-center gap-2">
+                                <i class="fas fa-layer-group text-neon-gold"></i>
+                                批量处理模式
+                            </h3>
+                            <button onclick="toggleBatchMode()" class="text-gray-500 hover:text-white transition-colors">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mb-3">每行一个文本，自动批量处理</p>
+                        <textarea id="batchInput" class="text-area w-full h-32 p-3 text-sm" placeholder="第一行文本&#10;第二行文本&#10;第三行文本..."></textarea>
+                        <div class="flex gap-3 mt-4">
+                            <button onclick="processBatch()" class="action-btn flex-1 py-3 rounded-lg font-display text-sm font-semibold">
+                                <span class="flex items-center justify-center gap-2">
+                                    <i class="fas fa-play"></i>
+                                    开始批量处理
+                                </span>
+                            </button>
+                            <button onclick="exportBatchResult()" class="px-4 py-3 rounded-lg border border-gray-700 text-gray-400 hover:text-neon-blue transition-colors tooltip" data-tooltip="导出为 CSV">
+                                <i class="fas fa-file-csv"></i>
+                            </button>
+                        </div>
+                        <div id="batchProgress" class="mt-3 hidden">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>处理进度</span>
+                                <span id="progressText">0/0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="progressBar" class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div id="batchResult" class="mt-4 hidden">
+                            <div class="text-xs text-gray-500 mb-2">处理结果:</div>
+                            <pre id="batchOutput" class="text-area w-full h-48 p-3 text-sm text-neon-green overflow-auto"></pre>
+                        </div>
+                    </div>
+                    
+                    <!-- 分析结果区域 -->
+                    <div id="analysisPanel" class="hidden"></div>
                 </div>
                 
                 <!-- 历史记录视图 -->
@@ -625,7 +441,7 @@
                     </div>
                     
                     <div id="historyContainer" class="space-y-3">
-                        <!-- 历史记录将由JS生成 -->
+                        <!-- 历史记录将由 JS 生成 -->
                     </div>
                     
                     <div id="emptyHistory" class="text-center py-20 hidden">
@@ -645,7 +461,143 @@
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="codexContainer">
-                        <!-- 图鉴内容由JS生成 -->
+                        <!-- 图鉴内容由 JS 生成 -->
+                    </div>
+                </div>
+                
+                <!-- 组合密码视图 -->
+                <div id="view-combo" class="view">
+                    <div class="mb-6">
+                        <h2 class="font-display text-2xl font-bold flex items-center gap-3">
+                            <i class="fas fa-layer-group text-neon-gold"></i>
+                            组合密码
+                            <span class="badge badge-new">NEW</span>
+                        </h2>
+                        <p class="text-gray-500 text-sm mt-2">支持 2-3 重密码组合加密，打造更复杂的安全防护</p>
+                    </div>
+                    
+                    <div class="glass-panel rounded-2xl p-6 mb-6">
+                        <h3 class="font-display text-lg font-semibold mb-4">选择组合方案</h3>
+                        <div id="comboSelector"></div>
+                        
+                        <div id="comboParams" class="mt-6"></div>
+                        
+                        <div class="mt-6">
+                            <textarea id="comboInput" class="text-area w-full h-32 p-4 text-sm" placeholder="输入要加密/解密的文本..."></textarea>
+                        </div>
+                        
+                        <div class="flex gap-4 mt-6">
+                            <button onclick="executeCombo('encrypt')" class="action-btn flex-1 py-4 rounded-xl font-display font-semibold">
+                                <span class="flex items-center justify-center gap-2">
+                                    <i class="fas fa-lock"></i>
+                                    组合加密
+                                </span>
+                            </button>
+                            <button onclick="executeCombo('decrypt')" class="action-btn flex-1 py-4 rounded-xl font-display font-semibold">
+                                <span class="flex items-center justify-center gap-2">
+                                    <i class="fas fa-unlock"></i>
+                                    组合解密
+                                </span>
+                            </button>
+                        </div>
+                        
+                        <div id="comboResult" class="mt-6 hidden">
+                            <div class="text-xs text-gray-500 mb-2">处理结果:</div>
+                            <pre id="comboOutput" class="text-area w-full h-48 p-3 text-sm text-neon-green overflow-auto"></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 多重翻译视图 -->
+                <div id="view-multi" class="view">
+                    <div class="mb-6">
+                        <h2 class="font-display text-2xl font-bold flex items-center gap-3">
+                            <i class="fas fa-random text-neon-purple"></i>
+                            多重翻译
+                            <span class="badge badge-new">NEW</span>
+                        </h2>
+                        <p class="text-gray-500 text-sm mt-2">同时翻译为多种格式，一键生成摩斯、二进制、十六进制等</p>
+                    </div>
+                    
+                    <div class="glass-panel rounded-2xl p-6 mb-6">
+                        <h3 class="font-display text-lg font-semibold mb-4">选择翻译预设</h3>
+                        <div id="multiPresets"></div>
+                        
+                        <div id="multiCustom" class="hidden"></div>
+                        
+                        <div class="mt-6">
+                            <textarea id="multiInput" class="text-area w-full h-32 p-4 text-sm" placeholder="输入要翻译的文本..."></textarea>
+                        </div>
+                        
+                        <div class="flex gap-4 mt-6">
+                            <button onclick="executeMultiTranslate()" class="action-btn flex-1 py-4 rounded-xl font-display font-semibold">
+                                <span class="flex items-center justify-center gap-2">
+                                    <i class="fas fa-bolt"></i>
+                                    执行多重翻译
+                                </span>
+                            </button>
+                            <button onclick="exportMultiResult('json')" class="px-6 py-4 rounded-xl border border-gray-700 text-gray-400 hover:text-neon-blue transition-colors">
+                                <i class="fas fa-file-code"></i>
+                            </button>
+                            <button onclick="exportMultiResult('text')" class="px-6 py-4 rounded-xl border border-gray-700 text-gray-400 hover:text-neon-blue transition-colors">
+                                <i class="fas fa-file-alt"></i>
+                            </button>
+                        </div>
+                        
+                        <div id="multiResult" class="mt-6"></div>
+                    </div>
+                </div>
+                
+                <!-- 密码本视图 -->
+                <div id="view-password-lab" class="view">
+                    <div class="mb-8">
+                        <h2 class="font-display text-3xl font-bold mb-2 bg-gradient-to-r from-neon-gold via-neon-green to-neon-blue bg-clip-text text-transparent">
+                            密码本实验室
+                        </h2>
+                        <p class="text-gray-400">生成强密码、探索密码历史、配置加密方案、学习安全实践</p>
+                    </div>
+                    
+                    <!-- 标签导航 -->
+                    <div class="flex gap-4 mb-8 overflow-x-auto pb-2">
+                        <button class="px-6 py-3 rounded-xl font-display font-semibold whitespace-nowrap bg-neon-gold/20 border border-neon-gold/50 text-neon-gold" onclick="showPasswordLabTab('generator')">
+                            <i class="fas fa-key mr-2"></i>密码生成
+                        </button>
+                        <button class="px-6 py-3 rounded-xl font-display font-semibold whitespace-nowrap bg-black/40 border border-gray-800 text-gray-400 hover:text-white" onclick="showPasswordLabTab('history')">
+                            <i class="fas fa-history mr-2"></i>密码历史
+                        </button>
+                        <button class="px-6 py-3 rounded-xl font-display font-semibold whitespace-nowrap bg-black/40 border border-gray-800 text-gray-400 hover:text-white" onclick="showPasswordLabTab('encryption')">
+                            <i class="fas fa-shield-alt mr-2"></i>加密方法
+                        </button>
+                        <button class="px-6 py-3 rounded-xl font-display font-semibold whitespace-nowrap bg-black/40 border border-gray-800 text-gray-400 hover:text-white" onclick="showPasswordLabTab('guide')">
+                            <i class="fas fa-book-open mr-2"></i>使用指南
+                        </button>
+                    </div>
+                    
+                    <!-- 密码生成器 -->
+                    <div id="password-lab-generator" class="password-lab-tab-content">
+                        <div id="passwordGeneratorUI"></div>
+                    </div>
+                    
+                    <!-- 密码历史与知识 -->
+                    <div id="password-lab-history" class="password-lab-tab-content hidden">
+                        <div id="passwordKnowledgeUI"></div>
+                    </div>
+                    
+                    <!-- 加密方法配置 -->
+                    <div id="password-lab-encryption" class="password-lab-tab-content hidden">
+                        <div id="encryptionMethodsUI"></div>
+                    </div>
+                    
+                    <!-- 使用指南 -->
+                    <div id="password-lab-guide" class="password-lab-tab-content hidden">
+                        <div id="passwordGuideUI"></div>
+                    </div>
+                </div>
+                
+                <!-- 设置视图 -->
+                <div id="view-settings" class="view">
+                    <div class="max-w-4xl mx-auto">
+                        <div id="settingsContainer"></div>
                     </div>
                 </div>
                 
@@ -662,6 +614,10 @@
                 <button onclick="showView('workspace')" class="flex flex-col items-center gap-1 text-gray-500" data-view="workspace">
                     <i class="fas fa-terminal"></i>
                     <span class="text-[10px]">工作台</span>
+                </button>
+                <button onclick="showView('password-lab')" class="flex flex-col items-center gap-1 text-gray-500" data-view="password-lab">
+                    <i class="fas fa-key"></i>
+                    <span class="text-[10px]">密码本</span>
                 </button>
                 <button onclick="showView('history')" class="flex flex-col items-center gap-1 text-gray-500" data-view="history">
                     <i class="fas fa-database"></i>
@@ -680,643 +636,24 @@
         <span id="toastText" class="text-sm"></span>
     </div>
 
-    <script>
-        // ==================== 应用状态 ====================
-        const AppState = {
-            currentView: 'home',
-            currentMode: 'encrypt',
-            currentCipher: 'morse',
-            history: JSON.parse(localStorage.getItem('cipherHistory') || '[]'),
-            totalOps: parseInt(localStorage.getItem('totalOps') || '0'),
-            params: {
-                caesar: { shift: 3 },
-                railfence: { rails: 2 },
-                vigenere: { key: 'KEY' },
-                affine: { a: 5, b: 8 }
-            }
-        };
-        
-        // ==================== 密码算法库 ====================
-        const CipherLibrary = {
-            morse: {
-                name: '摩斯密码',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><circle cx="6" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><line x1="10" y1="12" x2="14" y2="12"/></svg>`,
-                category: '古典',
-                description: '使用点和划表示字母的电报编码',
-                map: { 'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--', 'Z': '--..', '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.' },
-                encrypt: (text) => text.toUpperCase().split('').map(c => c === ' ' ? '/' : (CipherLibrary.morse.map[c] || c)).join(' '),
-                decrypt: (text) => text.split('/').map(w => w.trim().split(' ').map(c => Object.keys(CipherLibrary.morse.map).find(k => CipherLibrary.morse.map[k] === c) || c).join('')).join(' ')
-            },
-            caesar: {
-                name: '凯撒密码',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>`,
-                category: '古典',
-                description: '字母偏移加密，古罗马军事通信',
-                hasParams: true,
-                encrypt: (text, shift = 3) => text.split('').map(c => {
-                    if (c.match(/[a-z]/i)) {
-                        const base = c === c.toUpperCase() ? 65 : 97;
-                        return String.fromCharCode((c.charCodeAt(0) - base + shift) % 26 + base);
-                    }
-                    return c;
-                }).join(''),
-                decrypt: (text, shift = 3) => CipherLibrary.caesar.encrypt(text, 26 - shift)
-            },
-            base64: {
-                name: 'Base64',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>`,
-                category: '现代',
-                description: '二进制到文本的编码方案',
-                encrypt: (text) => btoa(unescape(encodeURIComponent(text))),
-                decrypt: (text) => decodeURIComponent(escape(atob(text)))
-            },
-            binary: {
-                name: '二进制',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/><path d="M10 7h4M7 10v4M14 17h0"/></svg>`,
-                category: '现代',
-                description: '字符转二进制表示',
-                encrypt: (text) => text.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' '),
-                decrypt: (text) => text.split(' ').map(b => String.fromCharCode(parseInt(b, 2))).join('')
-            },
-            hex: {
-                name: '十六进制',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><polygon points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5"/></svg>`,
-                category: '现代',
-                description: '字符转十六进制表示',
-                encrypt: (text) => text.split('').map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' '),
-                decrypt: (text) => text.split(' ').map(h => String.fromCharCode(parseInt(h, 16))).join('')
-            },
-            reverse: {
-                name: '反转',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
-                category: '基础',
-                description: '字符串顺序反转',
-                encrypt: (text) => text.split('').reverse().join(''),
-                decrypt: (text) => text.split('').reverse().join('')
-            },
-            rot13: {
-                name: 'ROT13',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>`,
-                category: '古典',
-                description: '字母旋转13位',
-                encrypt: (text) => CipherLibrary.caesar.encrypt(text, 13),
-                decrypt: (text) => CipherLibrary.caesar.encrypt(text, 13)
-            },
-            atbash: {
-                name: '埃特巴什',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="3"/></svg>`,
-                category: '古典',
-                description: '字母表镜像替换',
-                encrypt: (text) => text.split('').map(c => {
-                    if (c.match(/[a-z]/i)) {
-                        const base = c === c.toUpperCase() ? 65 : 97;
-                        return String.fromCharCode(base + 25 - (c.charCodeAt(0) - base));
-                    }
-                    return c;
-                }).join(''),
-                decrypt: (text) => text.split('').map(c => {
-                    if (c.match(/[a-z]/i)) {
-                        const base = c === c.toUpperCase() ? 65 : 97;
-                        return String.fromCharCode(base + 25 - (c.charCodeAt(0) - base));
-                    }
-                    return c;
-                }).join('')
-            },
-            railfence: {
-                name: '栅栏密码',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><path d="M3 6l6 12M9 6l6 12M15 6l6 12"/></svg>`,
-                category: '古典',
-                description: '按栅栏形状重排字符',
-                hasParams: true,
-                encrypt: (text, rails = 2) => {
-                    if (rails >= text.length || rails < 2) return text;
-                    const fence = Array(rails).fill('').map(() => []);
-                    let rail = 0, dir = 1;
-                    for (let c of text) {
-                        fence[rail].push(c);
-                        rail += dir;
-                        if (rail === 0 || rail === rails - 1) dir *= -1;
-                    }
-                    return fence.flat().join('');
-                },
-                decrypt: (text, rails = 2) => {
-                    if (rails >= text.length || rails < 2) return text;
-                    const fence = Array(rails).fill(null).map(() => []);
-                    const pattern = [];
-                    let rail = 0, dir = 1;
-                    for (let i = 0; i < text.length; i++) {
-                        pattern.push(rail);
-                        rail += dir;
-                        if (rail === 0 || rail === rails - 1) dir *= -1;
-                    }
-                    const counts = Array(rails).fill(0);
-                    pattern.forEach(r => counts[r]++);
-                    let idx = 0;
-                    for (let r = 0; r < rails; r++) {
-                        fence[r] = text.slice(idx, idx + counts[r]).split('');
-                        idx += counts[r];
-                    }
-                    const pos = Array(rails).fill(0);
-                    return pattern.map(r => fence[r][pos[r]++]).join('');
-                }
-            },
-            vigenere: {
-                name: '维吉尼亚',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>`,
-                category: '古典',
-                description: '多表替换密码',
-                hasParams: true,
-                encrypt: (text, key = 'KEY') => {
-                    if (!key) return text;
-                    key = key.toUpperCase().replace(/[^A-Z]/g, '');
-                    let ki = 0;
-                    return text.split('').map(c => {
-                        if (c.match(/[a-z]/i)) {
-                            const base = c === c.toUpperCase() ? 65 : 97;
-                            const shift = key[ki % key.length].charCodeAt(0) - 65;
-                            ki++;
-                            return String.fromCharCode((c.charCodeAt(0) - base + shift) % 26 + base);
-                        }
-                        return c;
-                    }).join('');
-                },
-                decrypt: (text, key = 'KEY') => {
-                    if (!key) return text;
-                    key = key.toUpperCase().replace(/[^A-Z]/g, '');
-                    let ki = 0;
-                    return text.split('').map(c => {
-                        if (c.match(/[a-z]/i)) {
-                            const base = c === c.toUpperCase() ? 65 : 97;
-                            const shift = key[ki % key.length].charCodeAt(0) - 65;
-                            ki++;
-                            return String.fromCharCode((c.charCodeAt(0) - base - shift + 26) % 26 + base);
-                        }
-                        return c;
-                    }).join('');
-                }
-            },
-            url: {
-                name: 'URL编码',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
-                category: '现代',
-                description: '网址安全编码',
-                encrypt: (text) => encodeURIComponent(text),
-                decrypt: (text) => decodeURIComponent(text)
-            },
-            ascii: {
-                name: 'ASCII码',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"/></svg>`,
-                category: '现代',
-                description: '字符转ASCII数值',
-                encrypt: (text) => text.split('').map(c => c.charCodeAt(0)).join(' '),
-                decrypt: (text) => text.split(' ').map(n => String.fromCharCode(parseInt(n))).join('')
-            },
-            md5: {
-                name: 'MD5',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 12l8-8"/><circle cx="20" cy="4" r="2"/></svg>`,
-                category: '哈希',
-                description: '消息摘要算法(单向)',
-                encrypt: (text) => CryptoJS.MD5(text).toString(),
-                decrypt: null
-            },
-            sha1: {
-                name: 'SHA-1',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-                category: '哈希',
-                description: '安全哈希算法(单向)',
-                encrypt: (text) => CryptoJS.SHA1(text).toString(),
-                decrypt: null
-            },
-            sha256: {
-                name: 'SHA-256',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
-                category: '哈希',
-                description: '256位安全哈希(单向)',
-                encrypt: (text) => CryptoJS.SHA256(text).toString(),
-                decrypt: null
-            },
-            bacon: {
-                name: '培根密码',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>`,
-                category: '古典',
-                description: '使用A/B五进制编码',
-                encrypt: (text) => {
-                    const map = { 'A': 'aaaaa', 'B': 'aaaab', 'C': 'aaaba', 'D': 'aaabb', 'E': 'aabaa', 'F': 'aabab', 'G': 'aabba', 'H': 'aabbb', 'I': 'abaaa', 'J': 'abaab', 'K': 'ababa', 'L': 'ababb', 'M': 'abbaa', 'N': 'abbab', 'O': 'abbba', 'P': 'abbbb', 'Q': 'baaaa', 'R': 'baaab', 'S': 'baaba', 'T': 'baabb', 'U': 'babaa', 'V': 'babab', 'W': 'babba', 'X': 'babbb', 'Y': 'bbaaa', 'Z': 'bbaab' };
-                    return text.toUpperCase().split('').filter(c => c >= 'A' && c <= 'Z').map(c => map[c]).join(' ').replace(/a/g, 'A').replace(/b/g, 'B');
-                },
-                decrypt: (text) => {
-                    const map = { 'aaaaa': 'A', 'aaaab': 'B', 'aaaba': 'C', 'aaabb': 'D', 'aabaa': 'E', 'aabab': 'F', 'aabba': 'G', 'aabbb': 'H', 'abaaa': 'I', 'abaab': 'J', 'ababa': 'K', 'ababb': 'L', 'abbaa': 'M', 'abbab': 'N', 'abbba': 'O', 'abbbb': 'P', 'baaaa': 'Q', 'baaab': 'R', 'baaba': 'S', 'baabb': 'T', 'babaa': 'U', 'babab': 'V', 'babba': 'W', 'babbb': 'X', 'bbaaa': 'Y', 'bbaab': 'Z' };
-                    return text.replace(/[^ABab]/g, '').toLowerCase().match(/.{5}/g)?.map(g => map[g] || '?').join('') || '';
-                }
-            },
-            affine: {
-                name: '仿射密码',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6"><line x1="4" y1="20" x2="20" y2="4"/><circle cx="8" cy="16" r="2"/><circle cx="16" cy="8" r="2"/></svg>`,
-                category: '古典',
-                description: '线性变换加密',
-                hasParams: true,
-                encrypt: (text, a = 5, b = 8) => {
-                    const modInverse = (n, m) => { for (let i = 1; i < m; i++) if ((n * i) % m === 1) return i; return -1; };
-                    if (modInverse(a, 26) === -1) return '错误: 参数a必须与26互质';
-                    return text.split('').map(c => {
-                        if (c.match(/[a-z]/i)) {
-                            const base = c === c.toUpperCase() ? 65 : 97;
-                            return String.fromCharCode((a * (c.charCodeAt(0) - base) + b) % 26 + base);
-                        }
-                        return c;
-                    }).join('');
-                },
-                decrypt: (text, a = 5, b = 8) => {
-                    const modInverse = (n, m) => { for (let i = 1; i < m; i++) if ((n * i) % m === 1) return i; return -1; };
-                    const aInv = modInverse(a, 26);
-                    if (aInv === -1) return '错误: 参数a必须与26互质';
-                    return text.split('').map(c => {
-                        if (c.match(/[a-z]/i)) {
-                            const base = c === c.toUpperCase() ? 65 : 97;
-                            return String.fromCharCode((aInv * ((c.charCodeAt(0) - base) - b + 26)) % 26 + base);
-                        }
-                        return c;
-                    }).join('');
-                }
-            }
-        };
-        
-        // ==================== 视图管理 ====================
-        function showView(viewName) {
-            AppState.currentView = viewName;
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(`view-${viewName}`).classList.add('active');
-            
-            // 更新导航状态
-            document.querySelectorAll('.nav-btn, .mobile-nav button').forEach(btn => {
-                const isActive = btn.dataset.view === viewName;
-                btn.classList.toggle('active', isActive);
-                if (btn.closest('.mobile-nav')) {
-                    btn.classList.toggle('text-neon-blue', isActive);
-                    btn.classList.toggle('text-gray-500', !isActive);
-                }
-            });
-            
-            // 特定视图初始化
-            if (viewName === 'history') renderHistory();
-            if (viewName === 'codex') renderCodex();
-            if (viewName === 'workspace') renderCipherGrid();
-        }
-        
-        function enterWorkspace(mode) {
-            AppState.currentMode = mode;
-            setMode(mode);
-            showView('workspace');
-        }
-        
-        function setMode(mode) {
-            AppState.currentMode = mode;
-            document.querySelectorAll('.mode-btn').forEach(btn => {
-                const isActive = btn.dataset.mode === mode;
-                btn.classList.toggle('bg-neon-blue/20', isActive && mode === 'encrypt');
-                btn.classList.toggle('bg-neon-green/20', isActive && mode === 'decrypt');
-                btn.classList.toggle('border-neon-blue/50', isActive && mode === 'encrypt');
-                btn.classList.toggle('border-neon-green/50', isActive && mode === 'decrypt');
-                btn.classList.toggle('text-neon-blue', isActive && mode === 'encrypt');
-                btn.classList.toggle('text-neon-green', isActive && mode === 'decrypt');
-                btn.classList.toggle('bg-transparent', !isActive);
-                btn.classList.toggle('border-gray-700', !isActive);
-                btn.classList.toggle('text-gray-400', !isActive);
-            });
-            document.getElementById('actionBtnText').textContent = mode === 'encrypt' ? '执行加密' : '执行解密';
-        }
-        
-        // ==================== 密码选择 ====================
-        function renderCipherGrid() {
-            const grid = document.getElementById('cipherGrid');
-            grid.innerHTML = Object.entries(CipherLibrary).map(([key, cipher]) => `
-                <div class="cipher-tile p-3 ${AppState.currentCipher === key ? 'selected' : ''}" onclick="selectCipher('${key}')">
-                    <div class="text-neon-blue mb-2">${cipher.icon}</div>
-                    <div class="text-xs font-semibold truncate">${cipher.name}</div>
-                    <div class="text-[10px] text-gray-500">${cipher.category}</div>
-                </div>
-            `).join('');
-        }
-        
-        function selectCipher(key) {
-            AppState.currentCipher = key;
-            document.querySelectorAll('.cipher-tile').forEach(tile => tile.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
-            document.getElementById('selectedCipherName').textContent = CipherLibrary[key].name;
-            renderParamConfig(key);
-        }
-        
-        function renderParamConfig(key) {
-            const config = document.getElementById('paramConfig');
-            const cipher = CipherLibrary[key];
-            
-            if (!cipher.hasParams) {
-                config.classList.add('hidden');
-                return;
-            }
-            
-            config.classList.remove('hidden');
-            let html = '';
-            
-            if (key === 'caesar') {
-                html = `
-                    <div class="flex items-center gap-4">
-                        <span class="text-xs text-gray-400 w-16">偏移量:</span>
-                        <input type="range" min="1" max="25" value="${AppState.params.caesar.shift}" 
-                            class="flex-1 accent-neon-blue" oninput="AppState.params.caesar.shift = parseInt(this.value); document.getElementById('paramVal').textContent = this.value">
-                        <span id="paramVal" class="text-neon-blue font-mono w-6 text-center">${AppState.params.caesar.shift}</span>
-                    </div>`;
-            } else if (key === 'railfence') {
-                html = `
-                    <div class="flex items-center gap-4">
-                        <span class="text-xs text-gray-400 w-16">栅栏数:</span>
-                        <input type="range" min="2" max="10" value="${AppState.params.railfence.rails}" 
-                            class="flex-1 accent-neon-purple" oninput="AppState.params.railfence.rails = parseInt(this.value); document.getElementById('paramVal').textContent = this.value">
-                        <span id="paramVal" class="text-neon-purple font-mono w-6 text-center">${AppState.params.railfence.rails}</span>
-                    </div>`;
-            } else if (key === 'vigenere') {
-                html = `
-                    <div class="flex items-center gap-4">
-                        <span class="text-xs text-gray-400 w-16">密钥:</span>
-                        <input type="text" value="${AppState.params.vigenere.key}" 
-                            class="text-area flex-1 px-3 py-2 text-sm"
-                            oninput="AppState.params.vigenere.key = this.value.toUpperCase().replace(/[^A-Z]/g, '')"
-                            placeholder="输入密钥(字母)">
-                    </div>`;
-            } else if (key === 'affine') {
-                html = `
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-gray-400">参数A:</span>
-                            <input type="number" value="${AppState.params.affine.a}" min="1" max="25"
-                                class="text-area flex-1 px-2 py-1 text-sm"
-                                oninput="AppState.params.affine.a = parseInt(this.value)">
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-gray-400">参数B:</span>
-                            <input type="number" value="${AppState.params.affine.b}" min="0" max="25"
-                                class="text-area flex-1 px-2 py-1 text-sm"
-                                oninput="AppState.params.affine.b = parseInt(this.value)">
-                        </div>
-                    </div>
-                    <p class="text-[10px] text-gray-500 mt-2">* 参数A必须与26互质 (1,3,5,7,9,11,15,17,19,21,23,25)</p>`;
-            }
-            
-            config.innerHTML = html;
-        }
-        
-        // ==================== 核心功能 ====================
-        function executeCipher() {
-            const input = document.getElementById('inputText').value;
-            if (!input.trim()) {
-                showToast('请输入文本内容', 'error');
-                return;
-            }
-            
-            const cipher = CipherLibrary[AppState.currentCipher];
-            const startTime = performance.now();
-            let result;
-            
-            try {
-                if (AppState.currentMode === 'encrypt') {
-                    result = cipher.encrypt(input, ...getParams());
-                } else {
-                    if (!cipher.decrypt) {
-                        showToast('该算法不支持解密(单向哈希)', 'error');
-                        return;
-                    }
-                    result = cipher.decrypt(input, ...getParams());
-                }
-                
-                const endTime = performance.now();
-                document.getElementById('outputText').textContent = result;
-                document.getElementById('outputCount').textContent = `输出: ${result.length} 字符`;
-                document.getElementById('processTime').textContent = `耗时: ${(endTime - startTime).toFixed(2)}ms`;
-                
-                // 保存历史
-                saveHistory(input, result, AppState.currentCipher, AppState.currentMode);
-                
-                // 更新统计
-                AppState.totalOps++;
-                localStorage.setItem('totalOps', AppState.totalOps);
-                updateStats();
-                
-            } catch (e) {
-                showToast('处理失败: ' + e.message, 'error');
-            }
-        }
-        
-        function getParams() {
-            const cipher = AppState.currentCipher;
-            if (cipher === 'caesar') return [AppState.params.caesar.shift];
-            if (cipher === 'railfence') return [AppState.params.railfence.rails];
-            if (cipher === 'vigenere') return [AppState.params.vigenere.key];
-            if (cipher === 'affine') return [AppState.params.affine.a, AppState.params.affine.b];
-            return [];
-        }
-        
-        // ==================== 历史记录 ====================
-        function saveHistory(input, output, cipher, mode) {
-            const item = {
-                id: Date.now(),
-                input: input.substring(0, 100),
-                output: output.substring(0, 100),
-                fullInput: input,
-                fullOutput: output,
-                cipher,
-                mode,
-                time: new Date().toLocaleString()
-            };
-            
-            AppState.history.unshift(item);
-            if (AppState.history.length > 50) AppState.history.pop();
-            localStorage.setItem('cipherHistory', JSON.stringify(AppState.history));
-        }
-        
-        function renderHistory() {
-            const container = document.getElementById('historyContainer');
-            const empty = document.getElementById('emptyHistory');
-            
-            if (AppState.history.length === 0) {
-                container.innerHTML = '';
-                empty.classList.remove('hidden');
-                return;
-            }
-            
-            empty.classList.add('hidden');
-            container.innerHTML = AppState.history.map(item => `
-                <div class="history-card p-4 cursor-pointer" onclick="loadHistoryItem(${item.id})">
-                    <div class="flex justify-between items-start mb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-display font-semibold ${item.mode === 'encrypt' ? 'text-neon-blue' : 'text-neon-green'}">
-                                ${item.mode === 'encrypt' ? '加密' : '解密'}
-                            </span>
-                            <span class="text-xs text-gray-500">•</span>
-                            <span class="text-xs text-neon-purple">${CipherLibrary[item.cipher].name}</span>
-                        </div>
-                        <span class="text-[10px] text-gray-600">${item.time}</span>
-                    </div>
-                    <div class="text-xs text-gray-400 truncate">
-                        <span class="text-gray-500">输入:</span> ${item.input}
-                    </div>
-                    <div class="text-xs text-gray-400 truncate mt-1">
-                        <span class="text-gray-500">输出:</span> ${item.output}
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        function loadHistoryItem(id) {
-            const item = AppState.history.find(h => h.id === id);
-            if (!item) return;
-            
-            document.getElementById('inputText').value = item.fullInput;
-            AppState.currentCipher = item.cipher;
-            AppState.currentMode = item.mode;
-            setMode(item.mode);
-            renderCipherGrid();
-            renderParamConfig(item.cipher);
-            showView('workspace');
-            showToast('已加载历史记录');
-        }
-        
-        function clearAllHistory() {
-            if (confirm('确定要清空所有历史记录吗？')) {
-                AppState.history = [];
-                localStorage.removeItem('cipherHistory');
-                renderHistory();
-                showToast('历史记录已清空');
-            }
-        }
-        
-        function exportHistory() {
-            const data = JSON.stringify(AppState.history, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `cipher-history-${Date.now()}.json`;
-            a.click();
-            showToast('历史记录已导出');
-        }
-        
-        // ==================== 密码图鉴 ====================
-        function renderCodex() {
-            const container = document.getElementById('codexContainer');
-            container.innerHTML = Object.entries(CipherLibrary).map(([key, cipher]) => `
-                <div class="codex-card p-5">
-                    <div class="flex items-start gap-4">
-                        <div class="text-neon-blue">${cipher.icon}</div>
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <h4 class="font-display font-semibold">${cipher.name}</h4>
-                                <span class="tag text-neon-purple">${cipher.category}</span>
-                            </div>
-                            <p class="text-sm text-gray-400 mb-2">${cipher.description}</p>
-                            <div class="flex gap-2">
-                                ${cipher.decrypt ? '<span class="tag text-neon-green">双向</span>' : '<span class="tag text-neon-red">单向</span>'}
-                                ${cipher.hasParams ? '<span class="tag text-neon-gold">可配置</span>' : ''}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // ==================== 工具函数 ====================
-        function handleInput() {
-            const count = document.getElementById('inputText').value.length;
-            document.getElementById('charCount').textContent = `字符: ${count.toLocaleString()}`;
-        }
-        
-        function clearInput() {
-            document.getElementById('inputText').value = '';
-            handleInput();
-        }
-        
-        async function pasteText() {
-            try {
-                const text = await navigator.clipboard.readText();
-                document.getElementById('inputText').value = text;
-                handleInput();
-                showToast('已粘贴文本');
-            } catch (e) {
-                showToast('无法访问剪贴板', 'error');
-            }
-        }
-        
-        function copyOutput() {
-            const text = document.getElementById('outputText').textContent;
-            navigator.clipboard.writeText(text).then(() => showToast('已复制到剪贴板'));
-        }
-        
-        function downloadOutput() {
-            const text = document.getElementById('outputText').textContent;
-            const blob = new Blob([text], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `cipher-${AppState.currentCipher}-${Date.now()}.txt`;
-            a.click();
-            showToast('文件已下载');
-        }
-        
-        function handleFileUpload(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('inputText').value = e.target.result;
-                handleInput();
-                showToast(`已加载文件: ${file.name}`);
-            };
-            reader.readAsText(file);
-        }
-        
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const text = document.getElementById('toastText');
-            text.textContent = message;
-            text.className = `text-sm ${type === 'error' ? 'text-neon-red' : 'text-neon-green'}`;
-            toast.classList.remove('translate-x-full');
-            setTimeout(() => toast.classList.add('translate-x-full'), 2500);
-        }
-        
-        function updateStats() {
-            document.getElementById('statTotalOps').textContent = AppState.totalOps;
-            document.getElementById('statHistory').textContent = AppState.history.length;
-        }
-        
-        // ==================== 初始化 ====================
-        document.addEventListener('DOMContentLoaded', () => {
-            updateStats();
-            renderCipherGrid();
-            
-            // 输入监听
-            document.getElementById('inputText').addEventListener('input', handleInput);
-            
-            // 拖拽上传
-            document.getElementById('inputText').addEventListener('dragover', (e) => {
-                e.preventDefault();
-                e.currentTarget.style.borderColor = '#00f0ff';
-            });
-            document.getElementById('inputText').addEventListener('dragleave', (e) => {
-                e.currentTarget.style.borderColor = '';
-            });
-            document.getElementById('inputText').addEventListener('drop', (e) => {
-                e.preventDefault();
-                e.currentTarget.style.borderColor = '';
-                const file = e.dataTransfer.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        document.getElementById('inputText').value = ev.target.result;
-                        handleInput();
-                    };
-                    reader.readAsText(file);
-                }
-            });
-        });
-    </script>
+    <!-- 模块化 JS -->
+    <script src="src/js/state.js"></script>
+    <script src="src/js/ciphers.js"></script>
+    <script src="src/js/views.js"></script>
+    <script src="src/js/history.js"></script>
+    <script src="src/js/ui.js"></script>
+    <script src="src/js/cipher-ui.js"></script>
+    <script src="src/js/core.js"></script>
+    <script src="src/js/batch.js"></script>
+    <script src="src/js/analyzer.js"></script>
+    <script src="src/js/combo.js"></script>
+    <script src="src/js/multi-translate.js"></script>
+    <script src="src/js/hotkeys.js"></script>
+    <script src="src/js/settings.js"></script>
+    <script src="src/js/password-generator.js"></script>
+    <script src="src/js/password-knowledge.js"></script>
+    <script src="src/js/encryption-methods.js"></script>
+    <script src="src/js/password-guide.js"></script>
+    <script src="src/js/main.js"></script>
 </body>
 </html>
