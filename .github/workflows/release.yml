@@ -1,0 +1,97 @@
+name: Auto Release / 自动发布
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version / 发布版本 (e.g. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+      prerelease:
+        description: 'Pre-release / 预发布'
+        type: boolean
+        default: false
+
+jobs:
+  create-release:
+    name: Create GitHub Release / 创建发布
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version / 获取版本号
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate changelog / 生成更新日志
+        id: changelog
+        run: |
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          echo "## Changes / 更新内容" >> $GITHUB_OUTPUT
+          git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 HEAD~1)..HEAD >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release / 创建GitHub发布
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          body: |
+            # 💰 Token Minimizer ${{ steps.get_version.outputs.VERSION }}
+
+            ## 🎯 What's New / 新特性
+
+            - 🌍 Full bilingual EN/CN support / 完整中英文双语支持
+            - 🚀 20x compression with <2% performance loss / 20倍压缩，性能损失<2%
+            - 🧘 Self-optimizing skill architecture / 自优化skill架构
+            - ✂️ Differential compression by priority / 差异化压缩
+            - ⚡ KV cache optimization / KV缓存优化
+
+            ${{ steps.changelog.outputs.CHANGELOG }}
+
+            ---
+
+            ## 📦 Installation / 安装
+
+            ```bash
+            git clone https://github.com/badhope/token-minimizer-Skill.git
+            ```
+
+            **Say "抠门" to activate! / 说"抠门"即可激活！**
+
+          draft: false
+          prerelease: ${{ inputs.prerelease || false }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-docs:
+    name: Deploy GitHub Pages / 部署文档
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: create-release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy README to Pages / 部署文档到Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          include: README.md LICENSE

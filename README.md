@@ -130,6 +130,60 @@ Token Minimizer (aka "抠门 Skill") is an LLM token optimization experiment. It
 
 ---
 
+## 🚀 One Click Publish / 一键发布
+
+### English
+
+Automatically create version tags and trigger GitHub Release workflow.
+
+**Windows (PowerShell):**
+```powershell
+.\publish.ps1 -Version v1.0.0
+```
+
+**Linux/Mac (Bash):**
+```bash
+chmod +x publish.sh
+./publish.sh v1.0.0
+```
+
+**Dry run (test without publishing):**
+```powershell
+.\publish.ps1 -Version v1.0.0 -DryRun
+```
+
+**Or manually from GitHub:**
+1. Go to Actions → Auto Release
+2. Click "Run workflow"
+3. Enter version number
+
+### 中文
+
+自动创建版本标签，触发GitHub Release工作流。
+
+**Windows (PowerShell):**
+```powershell
+.\publish.ps1 -Version v1.0.0
+```
+
+**Linux/Mac (Bash):**
+```bash
+chmod +x publish.sh
+./publish.sh v1.0.0
+```
+
+**试运行 (测试不发布):**
+```powershell
+.\publish.ps1 -Version v1.0.0 -DryRun
+```
+
+**或手动从GitHub发布:**
+1. 进入 Actions → Auto Release
+2. 点击 "Run workflow"
+3. 输入版本号
+
+---
+
 <div align="center">
 
 ## 📊 Cost Savings / 省钱效果
